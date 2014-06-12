@@ -1,0 +1,31 @@
+name: xchxenstore
+version: 0.1
+synopsis: XenClient xenstore bindings
+license: Properietary
+author: Tomasz Wroblewski
+build-type: Simple
+cabal-version: >=1.6
+stability: experimental
+tested-with: GHC==6.12.1
+
+library
+  Build-Depends:
+    base,
+    containers,
+    bytestring,
+    process,
+    unix,
+    utf8-string,
+    xchutils
+
+  GHC-Options: -O2 -fwarn-incomplete-patterns
+
+  Exposed-Modules:
+    Tools.XenStore
+
+  Other-Modules:
+    Tools.XenStoreC
+
+  Extra-Libraries: xenstore
+
+  C-sources: cbits/xs_helper.c

@@ -1,0 +1,21 @@
+Name:                udbus-intro
+Version:             0.1
+Description:         XML introspection tools for udbus.
+License:             AllRightsReserved
+Author:              Tomasz Wroblewski <tomasz.wroblewski@gmail.com>
+Build-Type:          Simple
+Category:            Network
+stability:           experimental
+Cabal-Version:       >=1.6
+
+Library
+  Build-Depends:
+    base,
+    HaXml,
+    text,
+    bytestring,
+    udbus	
+  Exposed-modules: Network.DBus.Introspect
+  Other-modules: Network.DBus.IntrospectParser
+
+  ghc-options: -O2 -Werror -fwarn-incomplete-patterns

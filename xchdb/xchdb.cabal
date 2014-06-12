@@ -1,0 +1,28 @@
+name: xchdb
+version: 0.1
+synopsis: Xenclient db access lib
+author: Tomasz Wroblewski
+build-type: Simple
+cabal-version: >=1.6
+category: Network, Desktop
+stability: experimental
+tested-with: GHC==6.12.1
+
+library
+  Build-Depends:
+    base,
+    mtl,
+    bytestring,
+    text,
+    containers,
+    json,
+    xchutils,
+    xch-rpc
+
+  exposed-modules:
+    Tools.Db
+
+  other-modules:
+    Rpc.Autogen.DbClient
+    Tools.Db.Core
+    Tools.Db.Marshall

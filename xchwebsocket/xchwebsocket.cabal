@@ -1,0 +1,23 @@
+name: xchwebsocket
+version: 0.1
+synopsis: XenClient web sockets library
+license: Properietary
+author: Tomasz Wroblewski
+build-type: Simple
+cabal-version: >=1.6
+stability: experimental
+tested-with: GHC==6.12.1
+
+library
+  Build-Depends:
+    base,
+    process,
+    mtl,
+    bytestring,
+    utf8-string,
+    binary
+
+  GHC-Options: -O2 -fwarn-incomplete-patterns
+
+  exposed-modules:
+    Network.WebSocket

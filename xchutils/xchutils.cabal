@@ -1,0 +1,42 @@
+name: xchutils
+version: 0.1
+synopsis: XenClient utility library
+license: Properietary
+author: Tomasz Wroblewski
+build-type: Simple
+cabal-version: >=1.6
+stability: experimental
+tested-with: GHC==6.12.1
+
+library
+  Build-Depends:
+    base,
+    time,
+    containers,
+    process,
+    directory,
+    unix,
+    mtl,
+    text,
+    json,
+    bytestring,
+    utf8-string,
+    filepath,
+    hsyslog
+
+  GHC-Options: -O2 -fwarn-incomplete-patterns
+
+  exposed-modules:
+    Tools.File
+    Tools.Log
+    Tools.Process
+    Tools.Text
+    Tools.Periodic
+    Tools.Misc
+    Tools.JSONTrees
+    Tools.IfM
+    Tools.FreezeIOM
+    Tools.Future
+
+  other-modules:
+    Tools.FileC

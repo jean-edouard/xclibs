@@ -1,0 +1,25 @@
+name: xchv4v
+version: 0.1
+synopsis: XenClient v4v bindings
+license: Proprietary
+author: Tomasz Wroblewski
+build-type: Simple
+cabal-version: >=1.6
+stability: experimental
+tested-with: GHC==6.12.1
+
+library
+  Build-Depends:
+    base,
+    mtl,
+    unix,
+    network,
+    bytestring,
+    xchutils
+
+  GHC-Options: -O2 -fwarn-incomplete-patterns
+
+  Exposed-Modules:
+    Tools.V4V
+
+  Extra-Libraries: v4v_nointerposer
