@@ -29,6 +29,7 @@ module Rpc.Dispatch
        , call
        , emit
        , hookSignal
+       , hookSignalRemove
        , hookSignalFrom
        , requestName
        , releaseName
@@ -182,6 +183,27 @@ matchesSignal r (ReceivedSignal _ sender sig)
       m (Just x) (Just y) = x == y
       
 matchesSignal _ _ = False
+
+hookSignalRemove :: Dispatcher
+  -> D.DBusMatchRules
+  -> (BusName -> RpcSignal -> IO ())
+  -> IO ()
+hookSignalRemove di mr' handler =
+ do remove
+    modifyMVar_ (signalCbs di) $ pure . (cb:)
+    where
+      remove = removeMatch di mr where
+      mr = mr' { D.matchType = Just D.TypeSignal }
+      cb m@(ReceivedSignal _ (Just sender) s)
+        | mr `matchesSignal` m = errors . handler sender $
+                           RpcSignal { signalPath = fromString . show $ D.signalPath s
+                                     , signalMemberT = fromString $ D.signalMember s
+                                     , signalInterfaceT = fromString $ D.signalInterface s
+                                     , signalArgs = D.signalBody s }
+      cb _ = return ()
+      
+      errors f = f `E.catch` report where
+        report (er :: E.SomeException) = warn $ "Error during signal processing: " ++ show er
 
 hookSignal :: Dispatcher
   -> D.DBusMatchRules
@@ -370,6 +392,10 @@ releaseName di b = call_ di (msgReleaseName b) >> return()
 addMatch :: Dispatcher -> D.DBusMatchRules -> IO ()
 addMatch d mr = call_ d (msgAddMatch mr) >> return()
 
+--low level functionality needed to remove matches when cleaning VmMonitors
+removeMatch :: Dispatcher -> D.DBusMatchRules -> IO ()
+removeMatch d mr = call d (msgRemoveMatch mr) >> return()
+
 msgRequestName :: BusName -> RpcCall
 msgRequestName b
   = RpcCall { callDest = fromString "org.freedesktop.DBus"
@@ -392,6 +418,26 @@ msgAddMatch mr
             , callPath = fromString "/org/freedesktop/DBus"
             , callInterfaceT = fromString "org.freedesktop.DBus"
             , callMemberT = fromString "AddMatch"
+            , callArgs = [ toVariant serialized ] }
+    where    
+      serialized = intercalate "," $ filter (not . null)
+                   [ mm "type"        show $ D.matchType mr
+                   , mm "sender"      id $ D.matchSender mr
+                   , mm "interface"   id $ D.matchInterface mr
+                   , mm "member"      id $ D.matchMember mr
+                   , mm "path"        D.unObjectPath $ D.matchPath mr
+                   , mm "destination" id $ D.matchDestination mr
+                   ]
+      mm key f = maybe "" (surroundQuote key . f)
+      surroundQuote key v = concat [ key, "='",  v, "'" ]
+
+--Opposite of AddMatch, just remove the match rule instead
+msgRemoveMatch :: D.DBusMatchRules -> RpcCall
+msgRemoveMatch mr
+  = RpcCall { callDest = fromString "org.freedesktop.DBus"
+            , callPath = fromString "/org/freedesktop/DBus"
+            , callInterfaceT = fromString "org.freedesktop.DBus"
+            , callMemberT = fromString "RemoveMatch"
             , callArgs = [ toVariant serialized ] }
     where    
       serialized = intercalate "," $ filter (not . null)
