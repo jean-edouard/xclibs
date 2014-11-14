@@ -34,6 +34,7 @@ module Rpc.Core
            , rpcCallProxy
            , rpcRunParallel
            , rpcOnSignal
+           , rpcOnSignalRemove
            , rpcOnSignalFrom
            , rpcVariantToX
            , rpcEmitSignal
@@ -173,6 +174,18 @@ rpcEmitSignal :: MonadRpc e m => RpcSignal -> m ()
 rpcEmitSignal signal = do
     client  <- rpcGetClient
     liftIO $ emit client signal
+
+rpcOnSignalRemove ::
+	(FreezeIOM ctx i m, MonadRpc e m)
+	=> MatchRule -> (BusName -> RpcSignal -> m ()) -> m ()
+rpcOnSignalRemove rule f = do
+	client <- rpcGetClient
+	freeze $ \context ->
+		hookSignalRemove client rule $ \sender sig -> do
+			handle =<< processInIO' context (f sender sig)
+	where
+		handle (Left ex) = warn ("error during signal processing: " ++ show ex)
+		handle _ = return ()	
 
 rpcOnSignal :: 
    ( FreezeIOM ctx i m, MonadRpc e m ) 
