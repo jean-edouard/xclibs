@@ -27,9 +27,9 @@
 #include <xenstore.h>
 #include "xcxenstore.h"
 
-static struct xs_handle *xs = NULL;
-static struct event xs_ev;
-static xs_transaction_t xs_transaction = XBT_NULL;
+static __thread struct xs_handle *xs = NULL;
+static __thread struct event xs_ev;
+static __thread xs_transaction_t xs_transaction = XBT_NULL;
 
 #define N_WATCHES       100
 
