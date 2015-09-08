@@ -27,9 +27,11 @@
 #include <xenstore.h>
 #include "xcxenstore.h"
 
+/* All threads will use the same xs handle and event (and watch list below). */
 static struct xs_handle *xs = NULL;
 static struct event xs_ev;
-static xs_transaction_t xs_transaction = XBT_NULL;
+/* Each thread should be able to make its own transaction */
+static __thread xs_transaction_t xs_transaction = XBT_NULL;
 
 #define N_WATCHES       100
 
@@ -577,6 +579,11 @@ char *xenstore_get_domain_path (unsigned int domid)
 
 int xenstore_init (void)
 {
+    /* if xs is not NULL, we assume this got called aready, and
+     * nothing needs to be done */
+    if (xs != NULL)
+        return 0;
+
     xs = xs_open (XS_UNWATCH_FILTER);
 
     if (!xs)
