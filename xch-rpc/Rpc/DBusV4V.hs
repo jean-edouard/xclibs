@@ -61,6 +61,8 @@ remoteDomainBus domain v4vPort = do
     connect addr = V.socket Stream >>= \f ->
       -- be careful to close fd on connect error..
                   ( do setFdOption f NonBlockingRead False
+                       let me = V.Addr (addrPort domain + 10000) 0x7FFF
+                       V.bind f me (addrDomID domain)
                        V.connect f addr
                        setFdOption f NonBlockingRead True
                        return f )
