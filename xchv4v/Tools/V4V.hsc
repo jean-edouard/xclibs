@@ -37,9 +37,11 @@ import Foreign.C.Error
 import System.Posix.Types
 import Network.Socket ( SocketType, packSocketType )
 import System.IO
+import System.IO.Error
 import System.Posix.IO
 import Tools.Log
 import Data.Bits
+import System.Environment
 
 -- bit of networking boilerplate
 #include <sys/socket.h>
@@ -100,11 +102,24 @@ bind f addr partner = do
         throwErrnoIfMinus1 "bind" $ c_v4v_bind (int f) addr_p (int partner)
     return ()
 
+maybeBindClient :: Fd -> Addr -> IO ()
+maybeBindClient f addr = do
+    do
+       envAddend <- getEnv "V4V_CLIENT_PORT_ADDEND"
+       let addend = read envAddend::Int
+       bind f (Addr (addrPort addr + addend) 0x7FFF) (addrDomID addr)
+       return ()
+    `Control.Exception.catch` \e -> do
+       if (System.IO.Error.isDoesNotExistError e)
+          then return ()
+          else throw e
+
 connect :: Fd -> Addr -> IO ()
 connect f addr = do
     with addr $ \addr_p ->
         let connect_loop =
-                do r <- c_v4v_connect (int f) addr_p
+                do maybeBindClient f addr
+                   r <- c_v4v_connect (int f) addr_p
                    if r == -1
                      then do err <- getErrno
                              case () of
