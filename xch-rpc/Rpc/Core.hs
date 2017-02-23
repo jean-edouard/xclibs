@@ -152,7 +152,9 @@ rpcCallOnce theCall =
          Right v    -> return v
 
 rpcHide :: MonadRpc e m => ObjectPath -> m ()
-rpcHide path = rpcGetClient >>= \client -> liftIO $ hide client path
+rpcHide path = rpcGetClient >>= \client -> do
+                                             transportClose client
+                                             liftIO $ hide client path
 
 -- Expose a DBUS Object implementing a set of interfaces to outside world
 rpcExpose :: (FreezeIOM ctx i m, MonadRpc e m) => ObjectPath -> [RpcInterface m] -> m ()
