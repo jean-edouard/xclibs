@@ -83,6 +83,6 @@ remoteDomainBus domain v4vPort = do
                                 l | l >= sz -> return chunk
                                 _           -> B.append chunk <$> recv_aux fd (sz - B.length chunk)
 
-    close fd        = V.close fd
+    close fd        = V.closeSafe fd
         
 #endif

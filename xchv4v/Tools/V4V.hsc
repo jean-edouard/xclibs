@@ -20,7 +20,7 @@
 module Tools.V4V ( Addr (..)
                  , DomID
                  , SocketType (..)
-                 , socket, close, bind, connect, listen, accept, send, recv
+                 , socket, close, bind, connect, listen, accept, send, recv, closeSafe
                  ) where
 
 import Data.Word
@@ -95,6 +95,13 @@ socket t =
 
 close :: Fd -> IO ()
 close f = throwErrnoIfMinus1 "close" ( c_v4v_close (int f) ) >> return ()
+
+closeSafe :: Fd -> IO ()
+closeSafe f = do
+                 socketError <- getsockopt f so_error
+                 if socketError == 0
+                    then close f
+                    else return ()
 
 bind :: Fd -> Addr -> DomID -> IO ()
 bind f addr partner = do

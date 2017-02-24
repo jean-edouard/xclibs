@@ -23,6 +23,7 @@ module Rpc.Dispatch
        , systemBus
        , sessionBus
        , connectBus
+       , closeBus
        , dispatch
        , expose
        , hide
@@ -95,6 +96,9 @@ connectBus c =
      forkIO $ dispatch d
      name <- hello d
      return (d, name)
+
+closeBus :: Dispatcher -> IO ()
+closeBus client = D.busClose (conn client)
 
 newDispatcher :: D.DBusContext -> IO Dispatcher
 newDispatcher c = Dispatcher <$> pure c <*> newChan <*> newChan <*> newMVar Map.empty <*> newMVar Map.empty <*> newMVar [] <*> newMVar ()
