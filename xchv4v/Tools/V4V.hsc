@@ -80,8 +80,8 @@ foreign import ccall "libv4v.h v4v_bind" c_v4v_bind        :: CInt -> Ptr Addr -
 foreign import ccall "libv4v.h v4v_connect" c_v4v_connect  :: CInt -> Ptr Addr -> IO CInt
 foreign import ccall "libv4v.h v4v_listen" c_v4v_listen    :: CInt -> CInt -> IO CInt
 foreign import ccall "libv4v.h v4v_accept" c_v4v_accept    :: CInt -> Ptr Addr -> IO CInt
-foreign import ccall "libv4v.h v4v_send" c_v4v_send        :: CInt -> Ptr Word8 -> CUInt -> CInt -> IO CInt
-foreign import ccall "libv4v.h v4v_recv" c_v4v_recv        :: CInt -> Ptr Word8 -> CUInt -> CInt -> IO CInt
+foreign import ccall "libv4v.h v4v_send" c_v4v_send        :: CInt -> Ptr Word8 -> CULong -> CInt -> IO CLong
+foreign import ccall "libv4v.h v4v_recv" c_v4v_recv        :: CInt -> Ptr Word8 -> CULong -> CInt -> IO CLong
 foreign import ccall "libv4v.h v4v_getsockopt" c_v4v_getsockopt :: CInt -> CInt -> CInt -> Ptr () -> Ptr Int -> IO Int
 
 int :: (Integral a, Num b) => a -> b
