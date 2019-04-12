@@ -27,7 +27,7 @@ import qualified Data.Map as M
 import Rpc.Monad
 import Rpc.Log
 import Rpc.Dispatch
-import qualified Rpc.DBusV4V as V
+import qualified Rpc.DBusArgo as A
 import qualified Control.Exception as E
 
 -- rpc on another domain's bus
@@ -57,7 +57,7 @@ rpcTryConnectDomainBus domid 0 = return Nothing
 rpcTryConnectDomainBus domid timeout
   = ( Just <$> get ) `E.catch` retry
   where
-    get = V.domainSystemBus domid >>= connectBus >>= return . fst
+    get = A.domainSystemBus domid >>= connectBus >>= return . fst
     retry :: E.SomeException -> IO (Maybe Dispatcher)
     retry e = do warn $ "domain's " ++ show domid ++ " sytem bus is unresponsive: " ++ show e ++ ", retrying.."
                  threadDelay (10^6)

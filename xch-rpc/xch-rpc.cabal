@@ -9,8 +9,8 @@ category: Network, Desktop
 stability: experimental
 tested-with: GHC==6.12.1
 
-Flag v4v
-  Description:  build with V4V supports
+Flag argo
+  Description:  build with Argo supports
   Default:      True
 
 library
@@ -31,14 +31,14 @@ library
     xchutils
 
   GHC-Options: -O2 -fwarn-incomplete-patterns
-  if flag(v4v)
-    Build-Depends: xchv4v
-    Extra-Libraries: v4v_nointerposer
-    cpp-options: -DUSE_V4V
+  if flag(argo)
+    Build-Depends: xchargo
+    Extra-Libraries: argo_nointerposer
+    cpp-options: -DUSE_ARGO
 
   exposed-modules:
     Rpc.Core
-    Rpc.DBusV4V
+    Rpc.DBusArgo
 
   other-modules:
     Rpc.Log
