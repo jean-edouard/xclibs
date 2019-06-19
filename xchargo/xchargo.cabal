@@ -1,6 +1,6 @@
-name: xchv4v
+name: xchargo
 version: 0.1
-synopsis: XenClient v4v bindings
+synopsis: XenClient argo bindings
 license: Proprietary
 author: Tomasz Wroblewski
 build-type: Simple
@@ -20,6 +20,6 @@ library
   GHC-Options: -O2 -fwarn-incomplete-patterns
 
   Exposed-Modules:
-    Tools.V4V
+    Tools.Argo
 
-  Extra-Libraries: v4v_nointerposer
+  Extra-Libraries: argo_nointerposer
