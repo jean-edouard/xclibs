@@ -162,7 +162,9 @@ char **vxenstore_ls (unsigned int *num, const char *format, va_list arg)
 
     assert (xs != NULL);
 
-    vasprintf (&buff, format, arg);
+    if (vasprintf (&buff, format, arg) == -1)
+        return NULL;
+
     ret = xs_directory (xs, xs_transaction, buff, num);
     free_no_errno (buff);
 
